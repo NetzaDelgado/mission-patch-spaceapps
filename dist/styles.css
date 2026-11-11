@@ -14,3 +14,6 @@
 .field-label{font-size:10px;color:#69745e}.field-label>input:not([type="range"]),.field-label>select,.field-label>textarea{font-size:11px;color:#46513f}.color-field{font-size:11px;color:#66735a}.color-field small{color:#7b876e}.toggle-row{color:#68765c}.library-heading p{color:#7c8770}.asset-card>span{color:#66725d;font-size:9px}.search-field input{font-size:11px}.category-chips button{font-size:10px;color:#69755f}.canvas-mode,.canvas-tools>button{color:#69785e}.inspector h3{font-size:12px}.panel-note{color:#778469}.export-settings>p,dialog>p{color:#778469}
 @media(max-width:1020px){.asset-card>span{font-size:8px}.category-chips button{font-size:9px}}
 @media(max-width:600px){.asset-card>span{font-size:7px}.category-chips button{font-size:9px}}
+.workspace-footer.author-credits{flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:13px 18px;text-align:center;flex-shrink:0}
+.workspace-footer.author-credits>span{display:block;font-size:10px;line-height:1.5;letter-spacing:0;color:#63705a}
+.workspace-footer.author-credits strong{font-weight:650}

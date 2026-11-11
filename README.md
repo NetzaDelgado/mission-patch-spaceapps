@@ -1,5 +1,7 @@
 # Órbita · Mission Patch Studio
 
+Elaborado por **Netzahualpilli Delgado Figueroa**, **Local Lead NASA SPACE APPS CHALLENGE 2026**.
+
 Editor visual en español para crear parches de misión y usarlos como imágenes de perfil. Incluye ilustraciones espaciales originales, plantillas, arrastrar y soltar, personalización y descargas. Es una herramienta independiente para la comunidad NASA Space Apps Challenge, sin afiliación oficial con NASA.
 
 ## Abrir el programa
@@ -26,7 +28,7 @@ No abras `dist/index.html` directamente con doble clic: los módulos JavaScript 
 6. Organiza el orden, la visibilidad y el bloqueo de los elementos desde **Capas**. Puedes duplicar, centrar o eliminar la selección.
 7. Comprueba la **Vista de perfil**, descarga la imagen y súbela como avatar en tu plataforma preferida.
 
-La biblioteca contiene **56 ilustraciones vectoriales** en seis categorías: Naves, Planetas, Exploración, Órbitas, Símbolos y Naturaleza. Cada proyecto admite hasta 200 elementos.
+La biblioteca contiene **500 ilustraciones vectoriales originales** en seis categorías: Naves, Planetas, Exploración, Órbitas, Símbolos y Naturaleza. Explora por categoría, busca por nombre o palabra clave y pulsa **Mostrar más elementos** para recorrer la biblioteca sin cargar los 500 dibujos a la vez. Incluye **12 paletas** (clásica, nocturna, alto contraste, cromo, océano, solar, desierto, bosque, violeta, hielo, neón y monocromática); al aplicar una, también se recolorean las ilustraciones y textos editables. Cada proyecto admite hasta 200 elementos.
 
 ## Descargar y continuar después
 
@@ -70,7 +72,9 @@ dist/
   index.html     Documento principal
   styles.css     Estilos y adaptación de la interfaz
   app.js         Editor, interacción y almacenamiento local
-  assets.js      Biblioteca de 56 ilustraciones SVG originales
+  assets.js      Biblioteca de 500 ilustraciones SVG originales
+  palettes.js    12 paletas de color
+  palette.css    Estilos de la selección de paletas
   model.js       Plantillas, validación y renderizado de parches
   export.js      Descargas de imágenes, SVG, PDF y proyectos
   favicon.svg    Icono del programa
@@ -85,3 +89,12 @@ npm test
 ```
 
 La carpeta `dist` es autónoma y puede servirse desde un alojamiento de archivos estáticos. El procesamiento de imágenes y las descargas ocurren en el navegador; no se necesita un servidor de datos, una cuenta ni servicios de terceros.
+
+## Publicar en GitHub Pages
+
+1. Crea un repositorio en GitHub y sube **el contenido de esta carpeta** a la raíz del repositorio (incluida la carpeta `.github`).
+2. En **Settings → Pages**, selecciona **GitHub Actions** como origen de publicación.
+3. Envía los cambios a la rama `main` o ejecuta manualmente **Actions → Deploy Mission Patch Studio to GitHub Pages → Run workflow**.
+4. Cuando termine la acción, abre la URL publicada que aparece en el resumen del despliegue.
+
+El flujo `.github/workflows/pages.yml` ejecuta las pruebas y la verificación de sintaxis antes de publicar directamente la carpeta `dist`; no requiere dependencias externas ni compilación. Las rutas de módulos y estilos son relativas, por lo que también funcionan en la URL de proyecto bajo `https://<usuario>.github.io/<repositorio>/`. Los proyectos guardados siguen siendo locales al navegador y no se sincronizan con GitHub.

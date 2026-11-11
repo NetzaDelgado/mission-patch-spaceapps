@@ -1,0 +1,4 @@
+.palette-options{grid-template-columns:repeat(3,minmax(0,1fr))}
+.palette-options button{height:auto;min-height:38px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:12px auto;align-content:center;gap:3px;padding:4px}
+.palette-options button span{width:auto;height:12px;border-radius:2px}
+.palette-options button small{grid-column:1/-1;font-size:7px;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

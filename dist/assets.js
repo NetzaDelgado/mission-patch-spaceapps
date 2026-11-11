@@ -61,8 +61,6 @@ const entries = [
   ['drop','Gota de agua','Naturaleza',[teal,cream,navy],'gota agua vida oceano'],
 ];
 
-export const ASSETS = entries.map(([id,name,category,colors,tags]) => ({id,name,category,colors,tags:tags.split(' ')}));
-
 const star = (cx,cy,r,inner=r*.43,n=5) => Array.from({length:n*2},(_,i)=>{const a=i*Math.PI/n-Math.PI/2;const d=i%2?inner:r;return `${cx+Math.cos(a)*d},${cy+Math.sin(a)*d}`}).join(' ');
 const ring = (cx,cy,rx,ry,color,width=3,rotation=0) => `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="none" stroke="${color}" stroke-width="${width}" transform="rotate(${rotation} ${cx} ${cy})"/>`;
 const circle=(x,y,r,c)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>`;
@@ -71,10 +69,201 @@ const poly=(points,c)=>`<polygon points="${points}" fill="${c}"/>`;
 const path=(d,c)=>`<path d="${d}" fill="${c}"/>`;
 const rect=(x,y,w,h,c,r=0)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${c}"/>`;
 
+const generatedNames = [
+  ['Lanzador Aurora', 'Sonda Horizonte', 'Nave Peregrina', 'Satélite Vigía', 'Módulo Estelar', 'Explorador Orbital', 'Vehículo Celeste', 'Cápsula Pionera'],
+  ['Mundo Carmesí', 'Luna Boreal', 'Gigante Anillado', 'Planeta Azul', 'Esfera Remota', 'Satélite Rocoso', 'Mundo Oceánico', 'Cuerpo Celeste'],
+  ['Astronauta Pionero', 'Rover Explorador', 'Estación de Campo', 'Telescopio Lejano', 'Módulo de Descenso', 'Antena Científica', 'Equipo de Exploración', 'Laboratorio Orbital'],
+  ['Trayectoria Lunar', 'Órbita de Encuentro', 'Ruta Interplanetaria', 'Arco Celeste', 'Ventana de Lanzamiento', 'Sistema Binario', 'Ruta de Retorno', 'Anillo de Exploración'],
+  ['Rosa de Navegación', 'Estrella Guía', 'Insignia Vectorial', 'Brújula Estelar', 'Marca de Misión', 'Símbolo de Equipo', 'Faro Orbital', 'Emblema Científico'],
+  ['Cumbres del Horizonte', 'Océano Planetario', 'Bosque Remoto', 'Aurora Polar', 'Dunas de Marte', 'Nube de Nitrógeno', 'Jardín Espacial', 'Valle Lunar'],
+];
+const generatedTags = [
+  'nave cohete sonda satelite exploracion espacio',
+  'planeta luna crater anillos mundo espacio',
+  'astronauta rover ciencia exploracion equipo',
+  'orbita trayectoria estrellas sistema espacio',
+  'simbolo emblema mision equipo geometria',
+  'naturaleza paisaje montana oceano planeta',
+];
+const generatedColors = [
+  [cream, orange, navy], [teal, cream, navy], [gold, orange, navy],
+  ['#8aa9d6', '#e7d5a5', '#374c78'], ['#c77d9a', '#f4d8c6', '#49375f'],
+  ['#8fc2a8', '#e2e8c9', '#315b55'], ['#d3a66c', '#f5e1b8', '#654b42'],
+];
+const generatedAssets = CATEGORIES.flatMap((category, categoryIndex) =>
+  Array.from({length: 74}, (_, offset) => {
+    const index = offset + 1;
+    return {
+      id: `orb-${categoryIndex + 1}-${String(index).padStart(3, '0')}`,
+      name: `${generatedNames[categoryIndex][offset % generatedNames[categoryIndex].length]} ${String(index).padStart(2, '0')}`,
+      category,
+      colors: [...generatedColors[(offset + categoryIndex * 2) % generatedColors.length]],
+      tags: generatedTags[categoryIndex].split(' '),
+      variant: {categoryIndex, index},
+    };
+  }),
+);
+export const ASSETS = [
+  ...entries.map(([id,name,category,colors,tags]) => ({id,name,category,colors,tags:tags.split(' ')})),
+  ...generatedAssets,
+];
+
+function generatedAssetMarkup(asset, [a, b, c]) {
+  const {categoryIndex, index} = asset.variant;
+  const angle = (index * 37 + categoryIndex * 19) % 360;
+  const inset = 18 + index % 12;
+  const detailCount = 1 + index % 4;
+  let art = '';
+
+  if (categoryIndex === 0) {
+    switch (index % 5) {
+      case 0:
+        art = path(`M50 8 Q${62 + index % 8} 28 62 57 L58 74 H42 L38 57 Q${38 - index % 8} 28 50 8Z`, a)
+          + path('M39 53 24 68 27 82 44 69M61 53 76 68 73 82 56 69', b)
+          + circle(50, 42, 8 + index % 5, c) + rect(43, 62, 14, 5, b, 2)
+          + path('M43 74Q40 88 50 94Q60 88 57 74Z', index % 2 ? c : b);
+        break;
+      case 1: {
+        const grid = Array.from({length: 1 + index % 4}, (_, i) => line(`M${13 + i * 7} 30V70`, c, 1.4)).join('');
+        art = rect(8, 29, 27, 42, b, 2) + rect(65, 29, 27, 42, b, 2) + grid
+          + rect(37, 36, 26, 28, a, 5) + circle(50, 50, 7 + index % 5, c)
+          + line('M50 35V20M50 64V80', b, 3) + circle(50, 15, 3 + index % 3, a);
+        break;
+      }
+      case 2:
+        art = path('M36 21Q50 9 64 21L78 62 69 77H31L22 62Z', a)
+          + path('M36 21Q50 9 64 21L69 36H31Z', b) + rect(39, 42, 22, 18, c, 7)
+          + line('M27 67H73M38 81H62', b, 3) + circle(34 + index % 7, 68, 3, c);
+        break;
+      case 3:
+        art = rect(24, 45, 52, 18, a, 5) + rect(38, 34, 24, 15, b, 3)
+          + circle(32, 70, 9 + index % 3, c) + circle(68, 70, 9 + index % 3, c)
+          + circle(32, 70, 4, b) + circle(68, 70, 4, b)
+          + line(`M50 35V${18 + index % 8}M50 ${18 + index % 8} 64 27`, a, 3);
+        break;
+      default:
+        art = ring(50, 50, 28 + index % 8, 13 + index % 5, b, 4, 25 + index % 90)
+          + rect(39, 40, 22, 22, a, 4) + circle(50, 51, 7, c)
+          + line('M50 40 62 22M50 62 37 81M39 51 18 42M61 51 82 61', b, 3)
+          + circle(63, 20, 4, c);
+    }
+  } else if (categoryIndex === 1) {
+    const radius = 30 + index % 12;
+    art = index % 3 === 0 ? ring(50, 51, 42, 12 + index % 8, b, 4, index * 7) : '';
+    art += circle(50, 50, radius, a);
+    for (let i = 0; i < detailCount; i++) {
+      const y = 31 + i * 13 + index % 5;
+      art += path(`M${50 - radius} ${y} Q50 ${y - (4 + index % 7)} ${50 + radius} ${y + (index % 3)} L${50 + radius} ${y + 6} Q50 ${y + 2} ${50 - radius} ${y + 8}Z`, i % 2 ? c : b);
+    }
+    for (let i = 0; i < 1 + index % 5; i++) {
+      art += circle(28 + (i * 17 + index * 3) % 45, 30 + (i * 11 + index * 5) % 42, 2 + (i + index) % 4, i % 2 ? b : c);
+    }
+    art += ring(50, 50, radius, radius, c, 1.5);
+  } else if (categoryIndex === 2) {
+    switch (index % 5) {
+      case 0:
+        art = circle(50, 29, 19, a) + rect(32, 26, 36, 32, c, 13)
+          + rect(31, 54, 38, 28, a, 8) + rect(38, 78, 10, 12, b, 3)
+          + rect(52, 78, 10, 12, b, 3) + rect(40, 33, 20, 12, b, 6)
+          + rect(41, 60, 18, 12, c, 3);
+        break;
+      case 1:
+        art = rect(22, 47, 56, 19, a, 4) + rect(36, 36, 25, 16, b, 2)
+          + circle(31, 72, 10, c) + circle(69, 72, 10, c) + circle(31, 72, 4, b)
+          + circle(69, 72, 4, b) + line(`M49 37V${17 + index % 9}L${63 + index % 5} 24`, a, 3);
+        break;
+      case 2:
+        art = path('M28 75 31 43 50 20 69 43 72 75Z', a)
+          + path('M31 43 50 20 69 43Z', b) + rect(41, 51, 18, 24, c, 3)
+          + line(`M34 57H${20 + index % 10}M66 57H${80 - index % 10}`, b, 3);
+        break;
+      case 3:
+        art = rect(46, 44, 8, 39, a, 2) + ring(50, 38, 22 + index % 9, 9 + index % 4, b, 4, index * 11)
+          + circle(50, 38, 8, c) + line('M50 83 39 94M50 83 61 94', a, 3);
+        break;
+      default:
+        art = line('M50 14V82M35 83H65M50 26 31 43M50 26 69 43', a, 5)
+          + circle(50, 13, 6 + index % 4, b) + circle(30, 45, 7, c) + circle(70, 45, 7, c)
+          + ring(50, 31, 31, 13, b, 2, index * 5);
+    }
+  } else if (categoryIndex === 3) {
+    art = ring(50, 50, 34 + index % 10, 13 + index % 9, b, 3, index * 9)
+      + (index % 2 ? ring(50, 50, 25 + index % 8, 41, c, 2, index * 13) : '')
+      + poly(star(50, 50, 15 + index % 8, 7 + index % 4, 4 + index % 5), a);
+    for (let i = 0; i < detailCount; i++) {
+      const x = 18 + (i * 23 + index * 7) % 64;
+      const y = 22 + (i * 19 + index * 11) % 56;
+      art += circle(x, y, 3 + (index + i) % 4, i % 2 ? c : b);
+    }
+  } else if (categoryIndex === 4) {
+    switch (index % 5) {
+      case 0:
+        art = poly(star(50, 50, 39, 20 + index % 9, 5 + index % 4), a)
+          + poly(star(50, 50, 18, 8, 5 + index % 4), b) + circle(50, 50, 5, c);
+        break;
+      case 1:
+        art = ring(50, 50, 30, 30, a, 4) + ring(50, 50, 16, 16, b, 3)
+          + line('M50 5V31M50 69V95M5 50H31M69 50H95', a, 3)
+          + poly(star(50, 50, 9, 4, 4), c);
+        break;
+      case 2:
+        art = poly(`50,${8 + index % 9} 82,50 50,${92 - index % 9} 18,50`, a)
+          + poly(`50,${22 + index % 5} 68,50 50,${78 - index % 5} 32,50`, b)
+          + circle(50, 50, 7, c);
+        break;
+      case 3:
+        art = poly(`50,7 62,35 93,38 70,57 77,88 50,72 23,88 30,57 7,38 38,35`, a)
+          + line(`M50 17V${37 + index % 8}M50 63V83M17 50H${37 + index % 8}M63 50H83`, b, 3)
+          + circle(50, 50, 6, c);
+        break;
+      default:
+        art = poly(`50,7 89,29 89,71 50,93 11,71 11,29`, a)
+          + poly(`50,${20 + index % 8} 76,36 76,64 50,80 24,64 24,36`, c)
+          + poly(star(50, 50, 17 + index % 7, 7, 5), b);
+    }
+  } else {
+    switch (index % 5) {
+      case 0:
+        art = path(`M4 85 ${28 + index % 8} ${35 + index % 7} 50 ${58 + index % 8} ${69 + index % 7} ${18 + index % 8} 96 85Z`, a)
+          + path(`M${28 + index % 8} ${35 + index % 7} 50 ${58 + index % 8} 40 55 31 58Z`, b)
+          + path(`M69 ${18 + index % 8} 50 ${58 + index % 8} 59 49 69 54Z`, c)
+          + line('M5 88H95', b, 3);
+        break;
+      case 1:
+        art = path(`M4 54Q20 ${35 + index % 12} 37 54T70 53Q83 37 96 47V89H4Z`, a)
+          + path(`M4 69Q20 54 38 68T72 67Q84 54 96 65V89H4Z`, c)
+          + line('M8 80Q23 70 38 80T68 79T92 80', b, 3);
+        break;
+      case 2:
+        art = path(`M18 82Q${5 + index % 8} 27 83 13Q95 85 30 88Z`, a)
+          + line(`M14 88 75 25M${30 + index % 8} 72 31 48M44 57 43 35M48 54 68 55M60 42 79 42`, b, 3)
+          + path('M14 88Q31 75 48 54Q66 35 83 13', c);
+        break;
+      case 3:
+        art = path('M5 51Q19 11 35 43T62 32Q79 5 95 25V57Q77 42 61 64T34 69Q19 43 5 77Z', a)
+          + path('M5 56Q19 22 35 50T62 40Q79 15 95 33V42Q77 27 61 52T34 58Q19 32 5 65Z', b)
+          + poly(star(19 + index % 62, 18 + index % 20, 5, 2, 4), c);
+        break;
+      default:
+        art = path(`M22 72Q5 72 6 55Q7 39 25 39Q30 18 49 20Q66 20 70 38Q91 32 95 52Q98 71 78 73Z`, a)
+          + path('M7 56Q10 72 25 72H78Q94 71 95 56Q84 67 72 63Q57 77 43 65Q21 72 7 56Z', b)
+          + circle(35, 44, 3 + index % 3, c);
+    }
+  }
+
+  const details = Array.from({length: detailCount}, (_, i) => {
+    const x = inset + (i * 23 + index * 5) % (100 - inset * 2);
+    const y = 12 + (i * 17 + index * 3) % 76;
+    return i % 2 ? circle(x, y, 1.5 + (i + index) % 2, c) : poly(star(x, y, 3 + (i + index) % 2, 1.3, 4), b);
+  }).join('');
+  return `<g transform="rotate(${angle} 50 50)" stroke-linecap="round" stroke-linejoin="round">${art}${details}</g>`;
+}
+
 export function assetMarkup(id, suppliedColors) {
   const asset=ASSETS.find(item=>item.id===id);
   if(!asset)return '';
   const [a,b,c]=asset.colors.map((fallback,i)=> /^#[0-9a-f]{6}$/i.test(suppliedColors?.[i]||'')?suppliedColors[i]:fallback);
+  if(asset.variant)return generatedAssetMarkup(asset,[a,b,c]);
   let art='';
   switch(id) {
     case 'rocket': art=path('M40 65 36 82 22 86 25 62 39 42',b)+path('M60 65 64 82 78 86 75 62 61 42',b)+path('M42 77 Q36 91 50 99 Q64 91 58 77',b)+path('M46 78 Q43 88 50 92 Q57 88 54 78',a)+path('M37 72 Q30 30 50 5 Q70 30 63 72Z',a)+path('M39 24 Q43 12 50 5 Q57 12 61 24Z',b)+circle(50,42,11,c)+circle(50,42,7,b)+circle(48,40,2,a)+rect(38,67,24,9,c,2)+line('M44 57H56',c,2);break;

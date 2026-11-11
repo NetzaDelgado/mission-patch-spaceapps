@@ -2,7 +2,29 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createDocument, validateDocument, renderPatch, TEMPLATES, patchShapePath } from '../dist/model.js';
 import { createPDF } from '../dist/export.js';
-import { ASSETS } from '../dist/assets.js';
+import { ASSETS, assetMarkup } from '../dist/assets.js';
+import { PALETTES } from '../dist/palettes.js';
+
+test('library has 500 uniquely named illustrations and palette choices', () => {
+  assert.equal(ASSETS.length, 500);
+  assert.equal(new Set(ASSETS.map(asset => asset.id)).size, 500);
+  assert.equal(new Set(ASSETS.map(asset => asset.name)).size, 500);
+  assert.equal(ASSETS.filter(asset => asset.variant).length, 444);
+  assert.equal(new Set(PALETTES.map(palette => palette.name)).size, 12);
+  for (const palette of PALETTES) {
+    for (const value of Object.values(palette.colors)) assert.match(value, /^#[0-9a-f]{6}$/i);
+  }
+});
+
+test('generated illustrations render unique, valid vector markup', () => {
+  const generated = ASSETS.filter(asset => asset.variant);
+  const artwork = generated.map(asset => assetMarkup(asset.id, asset.colors));
+  assert.equal(new Set(artwork).size, 444);
+  assert.ok(artwork.every(svg => svg.startsWith('<g ') && !/undefined|NaN/.test(svg)));
+  const document = createDocument('blank');
+  document.elements.push({id:'generated-1',type:'asset',assetId:generated.at(-1).id});
+  assert.equal(validateDocument(document).elements[0].assetId, generated.at(-1).id);
+});
 
 test('all templates have valid editable documents and available assets', () => {
   assert.ok(TEMPLATES.length >= 8);
